@@ -1,0 +1,3 @@
+[submodule "android/src/cpp/external/linux_syscall_support"]
+	path = android/src/cpp/external/linux_syscall_support
+	url = https://chromium.googlesource.com/linux-syscall-support

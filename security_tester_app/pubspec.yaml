@@ -1,0 +1,38 @@
+name: security_tester
+description: Security Tester is built on top of applist_detector_flutter library
+publish_to: 'none'
+
+version: 0.1.3+5
+
+environment:
+  sdk: '>=2.19.2 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  device_info_plus: ^9.0.2
+  package_info_plus: ^4.0.2
+  url_launcher: ^6.1.11
+  http:
+  in_app_update: ^4.1.4
+
+  # Report Generation
+  share_plus: ^7.0.2
+  path_provider: any
+  toml: ^0.14.0
+  
+  applist_detector_flutter:
+    path: ../applist_detector_flutter
+
+  firebase_core: ^2.13.1
+  firebase_crashlytics: ^3.3.2
+  
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true

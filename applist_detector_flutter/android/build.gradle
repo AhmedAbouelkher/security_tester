@@ -1,0 +1,75 @@
+group 'com.ahmed.applist_detector_flutter'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    ext.kotlin_version = '1.7.10'
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.2.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion 33
+    ndkVersion "25.0.8775105"
+
+    buildFeatures {
+        prefab = true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        minSdkVersion 23
+        targetSdk = 33
+        externalNativeBuild.ndkBuild {
+            arguments += "-j${Runtime.getRuntime().availableProcessors()}"
+        }
+    }
+
+    buildTypes {
+        release {
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            consumerProguardFiles("proguard-rules.pro")
+        }
+    }
+
+    externalNativeBuild.ndkBuild {
+        path("src/main/cpp/Android.mk")
+    }
+
+    dependencies {
+        implementation("com.android.tools.build:apkzlib:7.2.2")
+        implementation("io.github.vvb2060.ndk:xposeddetector:2.2")
+        implementation('com.google.android.play:integrity:1.1.0')
+        implementation('com.google.android.gms:play-services-base:18.2.0')
+        implementation 'com.scottyab:rootbeer-lib:0.1.0'
+    }
+}
+
