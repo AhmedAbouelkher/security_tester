@@ -25,53 +25,6 @@ class MainActivity : FlutterActivity() {
             flutterEngine.dartExecutor.binaryMessenger, channel
         ).setMethodCallHandler { call, result ->
             when (call.method) {
-                "check_vpn" -> {
-                    val metadata = hashMapOf<String, Boolean>()
-                    var isVPNConnected = false
-
-                    val l = NetworkInterface.getNetworkInterfaces()
-                    if (l != null) {
-                        for (intf in l) {
-                            if (!intf.isUp || intf.interfaceAddresses.isEmpty()) continue
-                            if (intf.name == "tun0" || intf.name == "ppp0") {
-                                isVPNConnected = true
-                                metadata["interface_name"] = true
-                            }
-                        }
-                    }
-
-                    val conMgr =
-                        context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
-
-                    val caps = conMgr.getNetworkCapabilities(conMgr.activeNetwork)
-                    if (caps != null) {
-                        if (caps.hasTransport(NetworkCapabilities.TRANSPORT_VPN)) {
-                            isVPNConnected = true
-                            metadata["transport_vpn"] = true
-                        }
-                    }
-
-                    // I really hate Java ecosystems and their lack of consistency
-                    // For more
-                    // - https://developer.android.com/reference/android/net/ConnectivityManager#getAllNetworks()
-                    // - https://developer.android.com/reference/android/net/ConnectivityManager#getNetworkInfo(int)
-
-                    @Suppress("DEPRECATION")
-                    if (conMgr.getNetworkInfo(17)?.isConnectedOrConnecting == true
-                        || conMgr.getNetworkInfo(17)?.isConnectedOrConnecting == null
-                    ) {
-                        isVPNConnected = true
-                        metadata["network_info"] = true
-                    }
-
-                    val data = hashMapOf<String, Any>()
-                    data["is_vpn_connected"] = isVPNConnected
-                    if(isVPNConnected) {
-                        data["metadata"] = metadata
-                    }
-                    result.success(data)
-                }
-
                 "check_display_settings" -> {
                     val data = mutableListOf<HashMap<String, Any>>()
 

@@ -34,8 +34,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    checkNewVersionUpdate();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.wait([
         _fetchPlayIntegrityAPI(),

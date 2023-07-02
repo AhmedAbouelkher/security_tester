@@ -15,7 +15,6 @@ dependencies:
   package_info_plus: ^4.0.2
   url_launcher: ^6.1.11
   http:
-  in_app_update: ^4.1.4
 
   # Report Generation
   share_plus: ^7.0.2

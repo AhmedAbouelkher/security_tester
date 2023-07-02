@@ -25,10 +25,6 @@ class _MoreToolsScreenState extends State<MoreToolsScreen> {
   Object? cpuInfoError;
   bool isCpuInfoExpanded = false;
 
-  Map? vpnDetails;
-  Object? vpnDetailsError;
-  bool isVpnDetailsExpanded = false;
-
   List? displaySettings;
   Object? displaySettingsError;
   bool isDisplaySettingsExpanded = false;
@@ -42,7 +38,6 @@ class _MoreToolsScreenState extends State<MoreToolsScreen> {
       Future.wait([
         _fetchDeviceInfo(),
         _fetchCPUInfo(),
-        _fetchVPNChecks(),
         _displaySettings(),
         _runSimpleChecks(),
       ]);
@@ -71,19 +66,6 @@ class _MoreToolsScreenState extends State<MoreToolsScreen> {
     } catch (e) {
       cpuInfo = null;
       cpuInfoError = e;
-    } finally {
-      setState(() {});
-    }
-  }
-
-  Future<void> _fetchVPNChecks() async {
-    try {
-      final result = await platform.invokeMethod<Map>('check_vpn');
-      vpnDetails = result;
-      vpnDetailsError = null;
-    } catch (e) {
-      vpnDetails = null;
-      vpnDetailsError = e;
     } finally {
       setState(() {});
     }
@@ -136,6 +118,7 @@ class _MoreToolsScreenState extends State<MoreToolsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final brightness = MediaQuery.of(context).platformBrightness;
     return Scaffold(
       appBar: AppBar(
         title: const Text("More Tools"),
@@ -156,7 +139,6 @@ class _MoreToolsScreenState extends State<MoreToolsScreen> {
           Future.wait([
             _fetchDeviceInfo(),
             _fetchCPUInfo(),
-            _fetchVPNChecks(),
             _displaySettings(),
             _runSimpleChecks(),
           ]);
@@ -223,6 +205,9 @@ class _MoreToolsScreenState extends State<MoreToolsScreen> {
               height: isAndroidInfoExpanded ? null : 0,
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.symmetric(horizontal: 16),
+              color: brightness == Brightness.light
+                  ? Colors.grey[200]
+                  : Colors.grey[800],
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -262,7 +247,9 @@ class _MoreToolsScreenState extends State<MoreToolsScreen> {
               height: isCpuInfoExpanded ? null : 0,
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              color: Colors.grey.shade900,
+              color: brightness == Brightness.light
+                  ? Colors.grey[200]
+                  : Colors.grey[800],
               child: Column(
                 children: [
                   if (cpuInfo != null) ...[
@@ -288,44 +275,6 @@ class _MoreToolsScreenState extends State<MoreToolsScreen> {
             ListTile(
               onTap: () {
                 setState(() {
-                  isVpnDetailsExpanded = !isVpnDetailsExpanded;
-                });
-              },
-              title: const Text('VPN Checks'),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    onPressed: _fetchVPNChecks,
-                    icon: const Icon(Icons.refresh_outlined),
-                  ),
-                  const Icon(Icons.arrow_drop_down),
-                ],
-              ),
-            ),
-            AnimatedContainer(
-              height: isVpnDetailsExpanded ? null : 0,
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              color: Colors.grey.shade900,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (vpnDetails != null) ...[
-                    Text(
-                      vpnDetails!.entries
-                          .map((e) => "${e.key}: ${e.value}")
-                          .join("\n"),
-                    ),
-                  ],
-                  const SizedBox(height: 5),
-                  if (vpnDetailsError != null) Text(vpnDetailsError.toString()),
-                ],
-              ),
-            ),
-            ListTile(
-              onTap: () {
-                setState(() {
                   isDisplaySettingsExpanded = !isDisplaySettingsExpanded;
                 });
               },
@@ -345,7 +294,9 @@ class _MoreToolsScreenState extends State<MoreToolsScreen> {
               height: isDisplaySettingsExpanded ? null : 0,
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              color: Colors.grey.shade900,
+              color: brightness == Brightness.light
+                  ? Colors.grey[200]
+                  : Colors.grey[800],
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

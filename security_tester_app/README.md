@@ -10,10 +10,6 @@ To learn more about contributions, See the [contribution](#contribution) section
 
 **This is not an officially supported Google product**
 
-[<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
-     alt="Get it on Google Play"
-     height="80">](https://play.google.com/store/apps/details?id=com.ahmed.security_tester)
-
 | Major Checks | More Major Checks |
 |---|---|
 | ![app home screen](./images/1687032141804.jpg) | ![displaying abnormal environment detection](./images/1687032141796.jpg) |

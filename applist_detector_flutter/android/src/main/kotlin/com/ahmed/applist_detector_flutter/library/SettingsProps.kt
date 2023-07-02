@@ -1,12 +1,16 @@
 package com.ahmed.applist_detector_flutter.library
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Debug
 import android.provider.Settings
 import android.util.Log
+import io.flutter.embedding.android.FlutterActivity
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
+import java.net.NetworkInterface
 
 
 private val TAG = SettingsProps::class.java.simpleName
@@ -59,6 +63,38 @@ class SettingsProps(context: Context) : IDetector(context) {
                 || Debug.waitingForDebugger()
     }
 
+    private fun vpnCheck(add: (Pair<String, Result>) -> Unit) {
+        add("VPN_interface_name" to Result.NOT_FOUND)
+        add("VPN_transport" to Result.NOT_FOUND)
+        add("VPN_network_info" to Result.NOT_FOUND)
+
+        val l = NetworkInterface.getNetworkInterfaces()
+        if (l != null) {
+            for (intf in l) {
+                if (!intf.isUp || intf.interfaceAddresses.isEmpty()) continue
+                if (intf.name == "tun0" || intf.name == "ppp0") {
+                    add("VPN_interface_name" to Result.SUSPICIOUS)
+                }
+            }
+        }
+
+        val conMgr =
+            context.getSystemService(FlutterActivity.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val caps = conMgr.getNetworkCapabilities(conMgr.activeNetwork)
+        if (caps != null) {
+            if (caps.hasTransport(NetworkCapabilities.TRANSPORT_VPN)) {
+                add("VPN_transport" to Result.SUSPICIOUS)
+            }
+        }
+
+        @Suppress("DEPRECATION")
+        if (conMgr.getNetworkInfo(17)?.isConnectedOrConnecting == true
+            || conMgr.getNetworkInfo(17)?.isConnectedOrConnecting == null
+        ) {
+            add("VPN_network_info" to Result.SUSPICIOUS)
+        }
+    }
+
     override fun run(packages: Collection<String>?, detail: Detail?): Result {
         if (packages != null) throw IllegalArgumentException("packages should be null")
         var result = Result.NOT_FOUND
@@ -69,6 +105,8 @@ class SettingsProps(context: Context) : IDetector(context) {
 
         add("Dev Options Enabled" to if (checkDevOptionsEnabled()) Result.SUSPICIOUS else Result.NOT_FOUND)
         add("ADB Enabled" to if (checkADBEnabled()) Result.SUSPICIOUS else Result.NOT_FOUND)
+
+        vpnCheck(add)
 
         return result
     }

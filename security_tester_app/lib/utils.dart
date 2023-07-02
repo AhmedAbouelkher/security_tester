@@ -1,9 +1,7 @@
 import 'dart:async';
 
 import 'package:applist_detector_flutter/applist_detector_flutter.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:in_app_update/in_app_update.dart';
 
 const darkColorScheme = ColorScheme.light(
     primary: Color(0xFF5DD4FC),
@@ -99,18 +97,5 @@ Future<ResultWrapper> buildWrapper(
       error: e,
       stackTrace: t,
     );
-  }
-}
-
-Future<void> checkNewVersionUpdate() async {
-  if (kDebugMode) return;
-  final result = await InAppUpdate.checkForUpdate();
-
-  if (result.updateAvailability == UpdateAvailability.updateAvailable &&
-      result.flexibleUpdateAllowed) {
-    final flexibleResult = await InAppUpdate.startFlexibleUpdate();
-    if (flexibleResult == AppUpdateResult.success) {
-      await InAppUpdate.completeFlexibleUpdate();
-    }
   }
 }
